@@ -7,6 +7,7 @@ import { isNull } from "../utils/Utils"
 import { TsDate } from "../app-env/TranspileCompatibility"
 import { HttpClient, HttpResponse, MediaType, RestBinaryBody, RestBody, RestTextBody, XhrError } from "@tutao/http-client"
 import { SuspensionError } from "@tutao/http-client/error"
+import { retryHeaderRejection } from "./HeaderRejectionRetry"
 
 EnvProvider.assertWorkerOrNode()
 
@@ -92,17 +93,21 @@ export class RestClient implements RestClientInterface {
 
 			let response: HttpResponse
 			try {
-				response = await this.httpClient.request(
-					url.toString(),
-					method,
-					body,
-					headers,
-					responseType,
-					timeout,
+				response = await retryHeaderRejection(
+					() =>
+						this.httpClient.request(
+							url.toString(),
+							method,
+							body,
+							headers,
+							responseType,
+							timeout,
+							abortSignal,
+							noCORS,
+							uploadProgressListener,
+							downloadProgressListener,
+						),
 					abortSignal,
-					noCORS,
-					uploadProgressListener,
-					downloadProgressListener,
 				)
 				this.saveServerTimeOffsetFromRequest(response)
 			} catch (e) {

@@ -104,6 +104,15 @@ export class HttpClientJavascript implements HttpClient {
 						} else if (responseType === MediaType.Binary) {
 							responseBody = new RestBinaryBody(new Uint8Array(xhr.response))
 						}
+					} else if (xhr.status === 400 && responseHeaders.get("content-type")?.split(";", 1)[0].trim().toLowerCase() === "text/html") {
+						// Preserve small HTTP-parser error pages so the REST layer can distinguish them
+						// from application BadRequestErrors. Never render or log this untrusted HTML.
+						const maxErrorBodySize = 16 * 1024
+						if (TypeChecks.isString(xhr.response) && xhr.response.length <= maxErrorBodySize) {
+							responseBody = new RestTextBody(xhr.response)
+						} else if (xhr.response instanceof ArrayBuffer && xhr.response.byteLength <= maxErrorBodySize) {
+							responseBody = new RestTextBody(new TextDecoder().decode(xhr.response))
+						}
 					}
 					resolve(new HttpResponse(xhr.status, xhr.statusText, responseBody, responseHeaders))
 				} catch (e) {

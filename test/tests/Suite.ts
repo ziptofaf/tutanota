@@ -367,6 +367,7 @@ async function setupSuite({ integration }: { integration?: boolean }) {
 		await import("./api/worker/facades/OfflineStorageAutosaveFacadeTest.js")
 		await import("./api/worker/facades/OfflineStorageSpamClassifierStorageFacadeTest.js")
 		await import("./restClient/RestClientTest.js")
+		await import("./restClient/HeaderRejectionRetryTest.js")
 	}
 
 	// testdouble complains about certain mocking related code smells, and also prints a warning whenever you replace a property on an object.

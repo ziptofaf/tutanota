@@ -1,3 +1,8 @@
+> **Personal patched fork:** this branch adds automatic recovery from the intermittent
+> `HTTP ERROR 400 Illegal header name Content-Length` failure.
+> See [patch details and desktop build instructions](doc/HEADER-REJECTION-FIX.md).
+> Based on desktop release `361.261006.0`; custom builds require manual updates.
+
 <div align="center">
 	<a href="https://tuta.com/" target="_blank"><img src="resources/images/logo-red.svg" alt="Tuta Mail logo" width="300"></a>
 	<br/>
